@@ -1,18 +1,36 @@
 using Assignment_1_Dahyun_Ko.Data;
+using Assignment_1_Dahyun_Ko.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(connectionString));
+var connStr = builder.Configuration.GetConnectionString("StudentContext");
+
+builder.Services.AddDbContext<StudentContext>(options =>
+    options.UseSqlServer(connStr));
+
+builder.Services.AddRouting(options =>
+{
+    options.LowercaseUrls = true;
+    options.AppendTrailingSlash = true;
+});
+
+builder.Services.AddControllersWithViews();
+
+builder.Services.AddRazorPages();
+
+//----------------------------------- 
+var connectionString = builder.Configuration.GetConnectionString("StudentContext");
+builder.Services.AddDbContext<ApplicationDbContext>(options =>options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<ApplicationDbContext>();
-builder.Services.AddControllersWithViews();
+//----------------------------------
+
+//builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 var app = builder.Build();
 
