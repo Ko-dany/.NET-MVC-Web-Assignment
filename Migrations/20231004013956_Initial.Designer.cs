@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Assignment_1_Dahyun_Ko.Migrations
 {
     [DbContext(typeof(StudentContext))]
-    [Migration("20230930211842_Initial")]
+    [Migration("20231004013956_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -23,6 +23,47 @@ namespace Assignment_1_Dahyun_Ko.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
+
+            modelBuilder.Entity("Assignment_1_Dahyun_Ko.Models.Program", b =>
+                {
+                    b.Property<string>("ProgramId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ProgramId");
+
+                    b.ToTable("Programs");
+
+                    b.HasData(
+                        new
+                        {
+                            ProgramId = "CP",
+                            Name = "Computer Programming"
+                        },
+                        new
+                        {
+                            ProgramId = "CPA",
+                            Name = "Computer Programming and Analysis"
+                        },
+                        new
+                        {
+                            ProgramId = "ITID",
+                            Name = "IT Innovation and Design"
+                        },
+                        new
+                        {
+                            ProgramId = "SET",
+                            Name = "Software Engineering Technology"
+                        },
+                        new
+                        {
+                            ProgramId = "BACS",
+                            Name = "Bachelor of Applied Computer Science"
+                        });
+                });
 
             modelBuilder.Entity("Assignment_1_Dahyun_Ko.Models.Student", b =>
                 {
@@ -50,7 +91,13 @@ namespace Assignment_1_Dahyun_Ko.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("ProgramId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("StudentId");
+
+                    b.HasIndex("ProgramId");
 
                     b.ToTable("Students");
 
@@ -61,8 +108,9 @@ namespace Assignment_1_Dahyun_Ko.Migrations
                             DateOfBirth = new DateTime(1971, 5, 31, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             FirstName = "Bart",
                             GPA = 2.7000000000000002,
-                            GPAScale = "Unsatisfactory",
-                            LastName = "Simpson"
+                            GPAScale = "Satisfactory",
+                            LastName = "Simpson",
+                            ProgramId = "CP"
                         },
                         new
                         {
@@ -70,18 +118,31 @@ namespace Assignment_1_Dahyun_Ko.Migrations
                             DateOfBirth = new DateTime(1973, 8, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             FirstName = "Lisa",
                             GPA = 4.0,
-                            GPAScale = "Unsatisfactory",
-                            LastName = "Simpson"
+                            GPAScale = "Excellence",
+                            LastName = "Simpson",
+                            ProgramId = "BACS"
                         },
                         new
                         {
                             StudentId = 3,
                             DateOfBirth = new DateTime(1996, 9, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            FirstName = "Dahyun",
-                            GPA = 3.7000000000000002,
-                            GPAScale = "Unsatisfactory",
-                            LastName = "Ko"
+                            FirstName = "Maggie",
+                            GPA = 3.1000000000000001,
+                            GPAScale = "Good",
+                            LastName = "Simpson",
+                            ProgramId = "CPA"
                         });
+                });
+
+            modelBuilder.Entity("Assignment_1_Dahyun_Ko.Models.Student", b =>
+                {
+                    b.HasOne("Assignment_1_Dahyun_Ko.Models.Program", "Program")
+                        .WithMany()
+                        .HasForeignKey("ProgramId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Program");
                 });
 #pragma warning restore 612, 618
         }

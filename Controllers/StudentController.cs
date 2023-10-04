@@ -1,5 +1,6 @@
 ﻿using Assignment_1_Dahyun_Ko.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Assignment_1_Dahyun_Ko.Controllers
 {
@@ -14,23 +15,58 @@ namespace Assignment_1_Dahyun_Ko.Controllers
 
         public IActionResult List()
         {
-            var students = _studentContext.Students.OrderBy(s=>s.StudentId).ToList();
+            var students = _studentContext.Students
+                .Include(s=>s.Program)
+                .OrderBy(s=>s.StudentId)
+                .ToList();
+            // Get Program Class data using 'Include' method so that we can access '@student.Program.Name'
+
             return View(students);
         }
 
+        [HttpGet]
         public IActionResult Add()
         {
-            return View();
+            ViewBag.Action = "Add";
+            ViewBag.Programs = _studentContext.Programs.ToList();
+            return View("Edit", new Student());
         }
 
-        public IActionResult Edit()
+
+        [HttpGet] 
+        public IActionResult Edit(int id)
         {
-            return View();
+            ViewBag.Action = "Edit";
+            ViewBag.Programs = _studentContext.Programs.ToList();
+            var studentInfo = _studentContext.Students.Find(id);
+            return View(studentInfo);
         }
 
-        public IActionResult Delete()
+        [HttpPost]
+        public IActionResult Edit(Student student)
         {
-            return View();
+            if (ModelState.IsValid)
+            {
+                if (student.StudentId == 0) _studentContext.Students.Add(student);
+                else _studentContext.Students.Update(student);
+
+                _studentContext.SaveChanges();
+                return RedirectToAction("List");
+            }
+            else
+            {
+                ViewBag.Action = (student.StudentId == 0) ? "Add" : "Edit";
+                ViewBag.Programs = _studentContext.Programs.ToList();
+            }
+            return View(student);
+        }
+
+        [HttpGet]
+        public IActionResult Delete(int id)
+        {
+            var studentInfo = _studentContext.Students.Find(id);
+            _studentContext.SaveChanges();
+            return View(studentInfo);
         }
     }
 }
