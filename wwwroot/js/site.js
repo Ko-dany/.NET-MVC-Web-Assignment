@@ -2,3 +2,11 @@
 // for details on configuring this project to bundle and minify static web assets.
 
 // Write your JavaScript code.
+$(document).ready(function () {
+    $('input[type=datetime]').datepicker({
+        dateFormat: "m/d/yy",
+        changeMonth: true,
+        changeYear: true,
+        yearRange: "-60:+0"
+    });
+});

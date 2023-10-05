@@ -68,5 +68,13 @@ namespace Assignment_1_Dahyun_Ko.Controllers
             _studentContext.SaveChanges();
             return View(studentInfo);
         }
+
+        [HttpPost]
+        public IActionResult Delete(Student student)
+        {
+            _studentContext.Students.Remove(student);
+            _studentContext.SaveChanges();
+            return RedirectToAction("List", "Student");
+        }
     }
 }
